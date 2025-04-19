@@ -1,0 +1,54 @@
+name: Detect Changed Modules
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: "Changed services matrix"
+        value: ${{ jobs.detect.outputs.matrix }}
+      webapp_changed:
+        description: "Whether web-app folder changed"
+        value: ${{ jobs.detect.outputs.webapp_changed }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      webapp_changed: ${{ steps.set.outputs.webapp_changed }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure full git history
+        run: |
+          git fetch --prune --unshallow || true
+          git fetch origin ${{ github.base_ref }} || true
+
+      - id: set
+        run: |
+          echo "🔍 Detecting changes..."
+          
+          # Fallback logic
+          if [ -z "${{ github.event.before }}" ] || [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
+            echo "⚠️ No base commit found, assuming all services changed"
+            SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
+            WEBAPP_CHANGED=true
+          else
+            CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || true)
+
+            if echo "$CHANGED" | grep -qE '^common/'; then
+              SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
+            else
+              SERVICES=$(echo "$CHANGED" | awk -F/ '/^(identity-service|order-service|product-service|notification-service)\// {print $1}' | sort -u | uniq | jq -R . | jq -s .)
+            fi
+
+            if echo "$CHANGED" | grep -qE '^web-app/'; then
+              WEBAPP_CHANGED=true
+            else
+              WEBAPP_CHANGED=false
+            fi
+          fi
+
+          echo "matrix=$SERVICES" >> $GITHUB_OUTPUT
+          echo "webapp_changed=$WEBAPP_CHANGED" >> $GITHUB_OUTPUT

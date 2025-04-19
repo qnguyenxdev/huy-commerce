@@ -1,0 +1,26 @@
+name: Build Feature Branch
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  detect-changes:
+    uses: ./.github/workflows/reusable-detect-changes.yml
+
+  build-services:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.matrix != '[]'
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+    uses: ./.github/workflows/reusable-service-build.yml
+    with:
+      service: ${{ matrix.service }}
+      goal: "clean package -DskipTests"
+
+  build-webapp:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.webapp_changed == 'true'
+    uses: ./.github/workflows/reusable-webapp-build.yml

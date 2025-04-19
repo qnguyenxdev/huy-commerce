@@ -1,0 +1,41 @@
+name: Reusable Service Build
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: 'Service name to build'
+        required: true
+        type: string
+      goal:
+        description: 'Maven goal to execute'
+        required: true
+        type: string
+
+jobs:
+    build:
+        runs-on: ubuntu-22.04
+        name: Build ${{ inputs.service }}
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up JDK 21
+          uses: actions/setup-java@v4
+          with:
+            java-version: '21'
+            distribution: 'corretto'
+            cache: 'maven'
+
+        - name: Cache Maven Dependencies
+          uses: actions/cache@v4
+          with:
+            path: ~/.m2/repository
+            key: maven-${{ runner.os }}-${{ hashFiles(format('{0}/pom.xml', inputs.service)) }}
+            restore-keys: |
+              maven-${{ runner.os }}-
+
+        - name: Build with Maven
+          run: |
+            echo "🚀 Building ${{ inputs.service }} with goal: ${{ inputs.goal }}"
+            mvn -f ${{ inputs.service }}/pom.xml ${{ inputs.goal }}
