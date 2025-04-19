@@ -57,5 +57,8 @@ jobs:
             fi
           fi
 
-          echo "matrix=$SERVICES" >> $GITHUB_OUTPUT
-          echo "webapp_changed=$WEBAPP_CHANGED" >> $GITHUB_OUTPUT
+           echo "📦 SERVICES = $SERVICES"
+           echo "🌐 WEBAPP_CHANGED = $WEBAPP_CHANGED"
+      
+           echo "matrix=$(printf '%s' "$SERVICES")" >> $GITHUB_OUTPUT
+           echo "webapp_changed=$WEBAPP_CHANGED" >> $GITHUB_OUTPUT
