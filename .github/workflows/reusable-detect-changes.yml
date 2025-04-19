@@ -1,0 +1,39 @@
+name: Detect Changed Modules
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: "Changed services matrix"
+        value: ${{ jobs.detect.outputs.matrix }}
+      webapp_changed:
+        description: "Whether web-app folder changed"
+        value: ${{ jobs.detect.outputs.webapp_changed }}
+
+jobs:
+  detect:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      webapp_changed: ${{ steps.set.outputs.webapp_changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: set
+        run: |
+          echo "🔍 Detecting changes..."
+          CHANGED=$(git diff --name-only ${{ github.event.before || format('origin/{0}...HEAD', github.base_ref) }})
+
+          if echo "$CHANGED" | grep -qE '^common/'; then
+            SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
+          else
+            SERVICES=$(echo "$CHANGED" | awk -F/ '/^(identity-service|order-service|product-service|notification-service)\// {print $1}' | sort -u | uniq | jq -R . | jq -s .)
+          fi
+
+          WEBAPP_CHANGED=false
+          if echo "$CHANGED" | grep -qE '^web-app/'; then
+            WEBAPP_CHANGED=true
+          fi
+
+          echo "matrix=$SERVICES" >> $GITHUB_OUTPUT
+          echo "webapp_changed=$WEBAPP_CHANGED" >> $GITHUB_OUTPUT

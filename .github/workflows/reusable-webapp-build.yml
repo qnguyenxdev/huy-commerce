@@ -1,0 +1,46 @@
+name: Reusable Angular Webapp Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Cache Node Modules
+        uses: actions/cache@v4
+        with:
+          path: web-app/node_modules
+          key: node-modules-${{ hashFiles('web-app/package-lock.json') }}
+          restore-keys: |
+            node-modules- 
+
+      - name: Cache Angular Build Artifacts
+        uses: actions/cache@v4
+        with:
+          path: web-app/.angular/cache
+          key: angular-cache-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            angular-cache-${{ github.ref }}
+            angular-cache-
+
+      - name: Install dependencies
+        working-directory: web-app
+        run: npm install
+
+      - name: Run Lint Check
+        working-directory: web-app
+        run: npm run lint --if-present
+
+      - name: Build the Angular app
+        working-directory: web-app
+        run: npm run build --if-present
