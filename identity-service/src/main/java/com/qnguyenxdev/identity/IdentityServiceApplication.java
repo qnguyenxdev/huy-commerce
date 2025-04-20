@@ -1,13 +1,13 @@
-package com.qnguyenxdev.identityservice;
+package com.qnguyenxdev.identity;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class IdentityserviceApplication {
+public class IdentityServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IdentityserviceApplication.class, args);
+		SpringApplication.run(IdentityServiceApplication.class, args);
 	}
 
 }

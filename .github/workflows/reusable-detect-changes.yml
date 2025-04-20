@@ -25,6 +25,13 @@ jobs:
           git fetch --prune --unshallow || true
           git fetch origin ${{ github.base_ref }} || true
 
+      - name: Debug changed files
+        run: |
+          echo "📁 Files changed between:"
+          echo "  FROM: ${{ github.event.before || github.base_ref }}"
+          echo "  TO:   ${{ github.sha }}"
+          git diff --name-only ${{ github.event.before || format('origin/{0}...HEAD', github.base_ref) }} || true
+
       - id: set
         run: |
           echo "🔍 Detecting changes..."
@@ -32,8 +39,8 @@ jobs:
           # Fallback logic
           if [ -z "${{ github.event.before }}" ] || [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
             echo "⚠️ No base commit found, assuming all services changed"
-            SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
-            WEBAPP_CHANGED=true
+            SERVICES='[]'
+            WEBAPP_CHANGED=false
           else
             CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || true)
 
@@ -50,5 +57,12 @@ jobs:
             fi
           fi
 
-          echo "matrix=$SERVICES" >> $GITHUB_OUTPUT
-          echo "webapp_changed=$WEBAPP_CHANGED" >> $GITHUB_OUTPUT
+           echo "📦 SERVICES = $SERVICES"
+           echo "🌐 WEBAPP_CHANGED = $WEBAPP_CHANGED"
+      
+          {
+            echo "matrix<<EOF"
+            echo "$SERVICES"
+            echo "EOF"
+            echo "webapp_changed=$WEBAPP_CHANGED"
+          } >> "$GITHUB_OUTPUT"

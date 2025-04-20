@@ -1,10 +1,10 @@
-package com.qnguyenxdev.identityservice;
+package com.qnguyenxdev.identity;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class IdentityserviceApplicationTests {
+class IdentityServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
