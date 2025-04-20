@@ -12,7 +12,7 @@
 	<artifactId>identity-service</artifactId>
 	<name>identity-service</name>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>Identity service in a mini e-commerce app</description>
+	<description>An identity service in a mini e-commerce app</description>
 	<url/>
 	<licenses>
 		<license/>
