@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.qnguyenxdev</groupId>
-	<artifactId>identity-service</artifactId>
-	<name>identity-service</name>
+	<artifactId>product-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<description>An identity service in a mini e-commerce app</description>
+	<name>product-service</name>
+	<description>A product service in a mini e-commerce app</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -69,22 +69,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<spring.profiles.active>dev</spring.profiles.active>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>prod</id>
-			<properties>
-				<spring.profiles.active>prod</spring.profiles.active>
-			</properties>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>

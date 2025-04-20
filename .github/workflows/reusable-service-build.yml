@@ -43,13 +43,13 @@ jobs:
         - name: Notify Slack on Success
           if: success()
           run: |
-            curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"✅ *${{ inputs.service }}* build succeeded on `${{ github.ref_name }}`."}' \
+            curl -X POST -H "Content-type: application/json" \
+            --data "{\"text\":\"✅ *${{ inputs.service }}* build succeeded on \`${{ github.ref_name }}\`.\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
 
         - name: Notify Slack on Failure
           if: failure()
           run: |
-            curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"❌ *${{ inputs.service }}* build failed on `${{ github.ref_name }}`.\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+            curl -X POST -H "Content-type: application/json" \
+            --data "{\"text\":\"❌ *${{ inputs.service }}* build failed on \`${{ github.ref_name }}\`.\nCheck logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
             ${{ secrets.SLACK_WEBHOOK_URL }}
