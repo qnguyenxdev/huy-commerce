@@ -39,8 +39,8 @@ jobs:
           # Fallback logic
           if [ -z "${{ github.event.before }}" ] || [ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]; then
             echo "⚠️ No base commit found, assuming all services changed"
-            SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
-            WEBAPP_CHANGED=true
+            SERVICES='[]'
+            WEBAPP_CHANGED=false
           else
             CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || true)
 
