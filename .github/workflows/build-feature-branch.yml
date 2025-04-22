@@ -19,6 +19,8 @@ jobs:
     with:
       service: ${{ matrix.service }}
       goal: "clean package -DskipTests"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-webapp:
     needs: detect-changes

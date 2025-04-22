@@ -20,6 +20,8 @@ jobs:
     with:
       service: ${{ matrix.service }}
       goal: "clean verify"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-webapp:
     needs: detect-changes
