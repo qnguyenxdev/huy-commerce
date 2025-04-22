@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,6 +20,7 @@ import java.util.Date;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -50,6 +52,7 @@ public class GlobalExceptionHandler {
                             ))})
     })
     public ErrorResponse handleValidationException(Exception e, WebRequest request) {
+        log.error(e.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(new Date());
@@ -108,9 +111,9 @@ public class GlobalExceptionHandler {
      *
      * @param e
      * @param request
-     * @return
+     * @return ErrorResponse
      */
-    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    @ExceptionHandler(AccessDeniedException.class)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = {@Content(mediaType = APPLICATION_JSON_VALUE,
@@ -129,6 +132,8 @@ public class GlobalExceptionHandler {
                             ))})
     })
     public ErrorResponse handleAccessDeniedException(Exception e, WebRequest request) {
+        log.error(e.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(new Date());
         errorResponse.setStatus(FORBIDDEN.value());
@@ -139,41 +144,43 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-    /**
-     * Handle exception when the data is conflicted
-     *
-     * @param e
-     * @param request
-     * @return
-     */
-    @ExceptionHandler(InvalidDataException.class)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Conflict",
-                    content = {@Content(mediaType = APPLICATION_JSON_VALUE,
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "422", description = "Unprocessable Entity", content = @Content),
+            @ApiResponse(responseCode = "503", description = "Service Unavailable",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE,
                             examples = @ExampleObject(
-                                    name = "409 Response",
-                                    summary = "Handle exception when input data is conflicted",
+                                    name = "503 Response",
+                                    summary = "Image upload failed",
                                     value = """
-                                            {
-                                              "timestamp": "2023-10-19T06:07:35.321+00:00",
-                                              "status": 409,
-                                              "path": "/api/v1/...",
-                                              "error": "Conflict",
-                                              "message": "{data} exists, Please try again!"
-                                            }
-                                            """
-                            ))})
+                    {
+                      "timestamp": "2023-10-19T06:07:35.321+00:00",
+                      "status": 503,
+                      "path": "/api/v1/product/upload",
+                      "error": "Service Unavailable",
+                      "message": "Failed to upload image"
+                    }
+                """
+                            )
+                    )
+            )
     })
-    public ErrorResponse handleDuplicateKeyException(InvalidDataException e, WebRequest request) {
+    @ExceptionHandler(value = AppException.class)
+    public ErrorResponse handlingAppException(AppException e, WebRequest request) {
+        log.error(e.getMessage());
+
+        ErrorCode errorCode = e.getErrorCode();
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(new Date());
+        errorResponse.setStatus((errorCode.getCode()));
         errorResponse.setPath(buildErrorPath(request));
-        errorResponse.setStatus(CONFLICT.value());
-        errorResponse.setError(CONFLICT.getReasonPhrase());
-        errorResponse.setMessage(e.getMessage());
+        errorResponse.setError(errorCode.getStatus().getReasonPhrase());
+        errorResponse.setMessage(Translator.toLocale(errorCode.getMessage()));
 
         return errorResponse;
     }
+
 
     /**
      * Handle exception when internal server error
@@ -184,15 +191,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+            @ApiResponse(responseCode = "9999", description = "Internal Server Error",
                     content = {@Content(mediaType = APPLICATION_JSON_VALUE,
                             examples = @ExampleObject(
-                                    name = "500 Response",
+                                    name = "9999 Response",
                                     summary = "Handle exception when internal server error",
                                     value = """
                                             {
                                               "timestamp": "2023-10-19T06:35:52.333+00:00",
-                                              "status": 500,
+                                              "status": 9999,
                                               "path": "/api/v1/...",
                                               "error": "Internal Server Error",
                                               "message": "Connection timeout, please try again"
@@ -201,12 +208,14 @@ public class GlobalExceptionHandler {
                             ))})
     })
     public ErrorResponse handleException(Exception e, WebRequest request) {
+        log.error(e.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(new Date());
         errorResponse.setPath(buildErrorPath(request));
-        errorResponse.setStatus(INTERNAL_SERVER_ERROR.value());
-        errorResponse.setError(INTERNAL_SERVER_ERROR.getReasonPhrase());
-        errorResponse.setMessage(e.getMessage());
+        errorResponse.setStatus(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        errorResponse.setError(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatus().getReasonPhrase());
+        errorResponse.setMessage(Translator.toLocale(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage()));
 
         return errorResponse;
     }
