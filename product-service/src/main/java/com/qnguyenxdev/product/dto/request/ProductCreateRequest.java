@@ -21,7 +21,6 @@ public class ProductCreateRequest implements Serializable {
     @Min(value = 0, message = "{validation.product.price.min}")
     @Max(value = 100000000, message = "{validation.product.price.max}")
     Float price;
-    String thumbnail;
     String description;
 
     @JsonProperty("category_id")

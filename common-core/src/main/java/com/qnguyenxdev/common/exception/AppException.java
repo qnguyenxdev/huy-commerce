@@ -1,5 +1,6 @@
 package com.qnguyenxdev.common.exception;
 
+import com.qnguyenxdev.common.enums.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 

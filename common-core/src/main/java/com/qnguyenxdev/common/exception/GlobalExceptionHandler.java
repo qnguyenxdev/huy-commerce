@@ -2,6 +2,7 @@ package com.qnguyenxdev.common.exception;
 
 import com.qnguyenxdev.common.configuration.Translator;
 import com.qnguyenxdev.common.dto.ErrorResponse;
+import com.qnguyenxdev.common.enums.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

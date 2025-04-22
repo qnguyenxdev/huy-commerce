@@ -45,7 +45,7 @@ jobs:
             CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} || true)
 
             if echo "$CHANGED" | grep -qE '^common/'; then
-              SERVICES='["identity-service", "order-service", "product-service", "notification-service"]'
+              SERVICES='["identity-service", "product-service"]'
             else
               SERVICES=$(echo "$CHANGED" | awk -F/ '/^(identity-service|order-service|product-service|notification-service)\// {print $1}' | sort -u | uniq | jq -R . | jq -s .)
             fi

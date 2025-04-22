@@ -1,4 +1,4 @@
-package com.qnguyenxdev.common.exception;
+package com.qnguyenxdev.common.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,11 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(1002, "error.global.invalid.resource.not.found", HttpStatus.NOT_FOUND),
     FILE_TOO_LARGE(1003, "error.global.file.too.large", HttpStatus.PAYLOAD_TOO_LARGE),
     INVALID_FILE_TYPE(1004, "error.global.invalid.file.type", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
-    CANNOT_UPLOAD_FILE(1005, "error.global.cannot.upload.file", HttpStatus.BAD_REQUEST),
-    NO_FILE(1006, "error.global.cannot.upload.file", HttpStatus.BAD_REQUEST),
+    INVALID_EMPTY_FILE(1005, "error.global.invalid.empty.file", HttpStatus.BAD_REQUEST),
+    FILE_UPLOAD_FAILED(1006, "error.global.file.upload.failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_IMAGE_ID(1006, "error.global.invalid.image.id", HttpStatus.BAD_REQUEST),
+    FILE_DELETE_FAILED(1006, "error.global.file.delete.failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    MISMATCH_IMAGE_TYPE_COUNT(1007, "error.global.mismatch.image.type.count", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {
