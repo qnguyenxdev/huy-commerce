@@ -4,7 +4,7 @@
 |  |__|  | |  |  |  |  \   \/   /   ______ |  ,----'|  |  |  | |  \  /  | |  \  /  | |  |__   |  |_)  |    |  ,----'|  |__   
 |   __   | |  |  |  |   \_    _/   |______||  |     |  |  |  | |  |\/|  | |  |\/|  | |   __|  |      /     |  |     |   __|  
 |  |  |  | |  `--'  |     |  |             |  `----.|  `--'  | |  |  |  | |  |  |  | |  |____ |  |\  \----.|  `----.|  |____ 
-|__|  |__|  \______/      |__|              \______| \______/  |__|  |__| |__|  |__| |_______|| _| `._____| \______||_______|                                                                                                                                                                                                                             
+|__|  |__|  \______/      |__|              \______| \______/  |__|  |__| |__|  |__| |_______|| _| `._____| \______||_______| 
 ```
 # 🛒 HuyCommerce – Microservices E-Commerce Platform
 
@@ -55,7 +55,7 @@
 
 ## 🗺️ Architecture Diagram
 
-![Architecture](./path-to-your-diagram.png)
+![Architecture](./Architecture.png)
 
 ---
 
@@ -63,6 +63,8 @@
 
 ### Prerequisites
 - Java 21+
+- Spring Boot 3.4.4
+- Maven 3.9.9
 - Node.js & Angular CLI
 - Docker & Docker Compose
 - PostgreSQL, MongoDB, Kafka, Elasticsearch running (via Docker or locally)
