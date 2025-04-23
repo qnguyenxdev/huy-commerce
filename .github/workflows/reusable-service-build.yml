@@ -11,10 +11,19 @@ on:
         description: 'Maven goal to execute'
         required: true
         type: string
+      active-profile:
+        required: false
+        type: string
+        default: dev
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
 
 jobs:
     build:
         runs-on: ubuntu-22.04
+        env:
+          ACTIVE_PROFILE: ${{ inputs.active-profile }}
         name: Build ${{ inputs.service }}
         steps:
         - name: Checkout code
@@ -34,6 +43,11 @@ jobs:
             key: maven-${{ runner.os }}-${{ hashFiles(format('{0}/pom.xml', inputs.service)) }}
             restore-keys: |
               maven-${{ runner.os }}-
+
+        - name: Build common-core module
+          run: |
+            echo "🔧 Building common-core module first..."
+            mvn -f common-core/pom.xml clean install
 
         - name: Build with Maven
           run: |

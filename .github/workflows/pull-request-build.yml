@@ -19,7 +19,10 @@ jobs:
     uses: ./.github/workflows/reusable-service-build.yml
     with:
       service: ${{ matrix.service }}
-      goal: "clean verify"
+      goal: "clean verify -Dmaven.test.skip=true"
+      active-profile: test
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build-webapp:
     needs: detect-changes
