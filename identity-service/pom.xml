@@ -68,6 +68,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -75,6 +80,13 @@
 			<id>dev</id>
 			<properties>
 				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>test</id>
+			<properties>
+				<spring.profiles.active>test</spring.profiles.active>
 			</properties>
 		</profile>
 

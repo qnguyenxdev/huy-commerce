@@ -19,7 +19,7 @@ jobs:
     with:
       service: ${{ matrix.service }}
       goal: "clean package -DskipTests"
-      active-profile: dev
+      active-profile: test
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
