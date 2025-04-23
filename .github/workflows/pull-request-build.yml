@@ -20,6 +20,7 @@ jobs:
     with:
       service: ${{ matrix.service }}
       goal: "clean verify"
+      active-profile: dev
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 

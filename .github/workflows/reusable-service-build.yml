@@ -11,6 +11,10 @@ on:
         description: 'Maven goal to execute'
         required: true
         type: string
+      active-profile:
+        required: false
+        type: string
+        default: dev
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -18,6 +22,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-22.04
+        env:
+          ACTIVE_PROFILE: ${{ inputs.active-profile }}
         name: Build ${{ inputs.service }}
         steps:
         - name: Checkout code
