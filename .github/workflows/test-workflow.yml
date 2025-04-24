@@ -1,0 +1,37 @@
+name: build-service
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  detect-changes:
+    uses: ./.github/workflows/reusable-detect-changes.yml
+
+  package-services:
+    if: github.event_name == 'push' && needs.detect-changes.outputs.matrix != '[]'
+    name: package-services
+    needs: detect-changes
+    concurrency:
+      group: package-${{ github.ref }}
+      cancel-in-progress: true
+    strategy:
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+    uses: ./.github/workflows/reusable-service-build.yml
+    with:
+      service: ${{ matrix.service }}
+      goal: "clean package -DskipTests"
+      active-profile: test
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  build-webapp:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.webapp_changed == 'true'
+    uses: ./.github/workflows/reusable-webapp-build.yml
