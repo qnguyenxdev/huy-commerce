@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/reusable-detect-changes.yml
 
   package-services:
-    if: github.event_name == 'push' && needs.detect-changes.outputs.matrix != '[]'
+    if: needs.detect-changes.outputs.matrix != '[]'
     name: package-services
     needs: detect-changes
     concurrency:
