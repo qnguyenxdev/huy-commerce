@@ -1,17 +1,25 @@
-name: Build Feature Branch
+name: build-service
 
 on:
   push:
     branches:
       - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - main
 
 jobs:
   detect-changes:
     uses: ./.github/workflows/reusable-detect-changes.yml
 
-  build-services:
-    needs: detect-changes
+  package-services:
     if: needs.detect-changes.outputs.matrix != '[]'
+    name: package-services
+    needs: detect-changes
+    concurrency:
+      group: package-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       matrix:
         service: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
